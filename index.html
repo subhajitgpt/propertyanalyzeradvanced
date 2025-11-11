@@ -1501,6 +1501,38 @@ json.dumps(result)
       </tr>`).join('');
     }
 
+    // Export buttons for second tab (Retail Feasibility)
+    document.getElementById('btnExportCSV').addEventListener('click', ()=>{
+      const rows = currentPOISelection();
+      if(!rows.length){ alert('No POI data to export. Please scan an area and select a category first.'); return; }
+      
+      const header = ["#", "Name", "Address", "Rating", "Rating Count", "Type", "Google Maps Link"];
+      const csvRows = rows.map(r=>[
+        r.idx, r.name, r.address, r.rating!==''?Number(r.rating).toFixed(1):'', 
+        r.ratingCount, r.type, r.link
+      ]);
+      const csv = [header.join(",")].concat(csvRows.map(r=>r.map(csvCell).join(","))).join("\n");
+      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+      downloadBlob(`poi_export_${Date.now()}.csv`, blob);
+    });
+
+    document.getElementById('btnExportXLSX').addEventListener('click', ()=>{
+      const rows = currentPOISelection();
+      if(!rows.length){ alert('No POI data to export. Please scan an area and select a category first.'); return; }
+      
+      const data = [["#", "Name", "Address", "Rating", "Rating Count", "Type", "Google Maps Link"]]
+        .concat(rows.map(r=>[
+          r.idx, r.name, r.address, r.rating!==''?Number(r.rating).toFixed(1):'', 
+          r.ratingCount, r.type, r.link
+        ]));
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "POI Data");
+      const ab = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+      const blob = new Blob([ab], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      downloadBlob(`poi_export_${Date.now()}.xlsx`, blob);
+    });
+
     // Tab map reflow
     document.querySelectorAll('#mainTabs button[data-bs-toggle="tab"]').forEach(btn=>{
       btn.addEventListener('shown.bs.tab', e=>{
