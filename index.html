@@ -303,7 +303,8 @@
                 <div class="col-4">
                   <label class="form-label">Currency</label>
                   <select id="currency" class="form-select">
-                    <option value="INR" selected>₹ INR</option><option value="AED">AED</option><option value="USD">$</option>
+                    <option value="INR" selected>₹ INR</option>
+                    <option value="AED">د.إ AED</option>
                   </select>
                 </div>
                 <div class="col-4">
@@ -1045,7 +1046,7 @@ def decrypt_key(encrypted_data, passphrase="default_salt_2024"):
     });
 
     function fmtMoneyEstimator(n){
-      const cur = {"INR":"₹","AED":"AED ","USD":"$"}[document.getElementById('currency').value]||"";
+      const cur = {"INR":"₹","AED":"د.إ "}[document.getElementById('currency').value]||"";
       return (n==null||isNaN(n)) ? '-' : (cur + Math.round(n).toLocaleString());
     }
     function fmtPct(n){ return (n==null||isNaN(n)) ? '-' : (n.toFixed(2)+' %'); }
